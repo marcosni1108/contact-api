@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -16,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @JsonInclude( JsonInclude.Include.NON_NULL )
 public class ContactDTO {
 
-    @NotNull( message = "{required.field}" )
+    @NotBlank( message = "{required.field}" )
     private String name;
 
     @CPF( message = "{invalid.cpf}" )

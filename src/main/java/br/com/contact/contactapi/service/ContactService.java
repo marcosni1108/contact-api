@@ -4,8 +4,10 @@ import br.com.contact.contactapi.annotations.LogExecution;
 import br.com.contact.contactapi.domain.Contact;
 import br.com.contact.contactapi.exception.APIException;
 import br.com.contact.contactapi.exception.NoContentException;
+import br.com.contact.contactapi.exception.RequiredFieldException;
 import br.com.contact.contactapi.exception.enums.APIErrorsEnum;
 import br.com.contact.contactapi.repository.ContactRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,14 @@ public class ContactService {
 
     @LogExecution
     public Contact updateContactByDocumentNumber( String documentNumber, Contact updatedContact ) {
+        if( StringUtils.isBlank( updatedContact.getName() ) ) {
+            throw new RequiredFieldException( "name" );
+        }
+
+        if( StringUtils.isBlank( updatedContact.getPhoneNumber() ) ) {
+            throw new RequiredFieldException( "phoneNumber" );
+        }
+
         Contact contact = repository.findByDocumentNumber( documentNumber )
                 .orElseThrow( NoContentException :: new );
 
