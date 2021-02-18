@@ -16,11 +16,14 @@ import javax.validation.constraints.NotNull;
 @JsonInclude( JsonInclude.Include.NON_NULL )
 public class ContactDTO {
 
+    @NotNull( message = "{required.field}" )
     private String name;
 
-    @NotNull
-    @CPF
+    @CPF( message = "{invalid.cpf}" )
+    @NotNull( message = "{required.field}" )
     private String documentNumber;
+
+    @NotNull( message = "{required.field}" )
     private String phoneNumber;
 
 }
