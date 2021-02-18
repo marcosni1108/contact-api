@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="json-configuration">
+    <Appenders>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <FrotaJsonLayout maxLogSize="15000"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="br.com.contact" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.springframework.web.servlet" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.springframework.jdbc" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.apache.activemq.transport.failover.FailoverTransport" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
