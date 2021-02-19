@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -39,15 +40,14 @@ public class ContactController {
     }
 
     @DeleteMapping( value = "/{documentNumber}" )
-    public ResponseEntity deleteContactByDocumentNumber( @PathVariable( value = "documentNumber" ) String documentNumber ) {
+    @ResponseStatus( HttpStatus.OK )
+    public void deleteContactByDocumentNumber( @PathVariable( value = "documentNumber" ) String documentNumber ) {
         service.deleteContactByDocumentNumber( documentNumber );
-        return new ResponseEntity( HttpStatus.OK );
     }
 
     @PutMapping( value = "/{documentNumber}" )
     public ResponseEntity< ContactDTO > updateContactByDocumentNumber( @PathVariable( value = "documentNumber" ) String documentNumber,
                                                                        @RequestBody @Valid ContactDTO contact ) {
-
         ContactDTO contactDTO = ContactMapper.toContactDTO( service.updateContactByDocumentNumber( documentNumber, ContactMapper.toContact( contact ) ) );
         return new ResponseEntity<>( contactDTO, HttpStatus.CREATED );
     }
