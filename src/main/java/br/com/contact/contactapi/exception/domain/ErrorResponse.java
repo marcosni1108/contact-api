@@ -38,16 +38,13 @@ public class ErrorResponse {
     public static ErrorResponse adapt( TypeMismatchException constraintViolation ) {
 
         Class< ? > requiredType = constraintViolation.getRequiredType();
-        String requiredTypeName = Optional.ofNullable( requiredType )
-                .map( Class :: getSimpleName )
-                .orElse( null );
+        Optional.ofNullable( requiredType )
+                .map( Class :: getSimpleName );
 
         if( requiredType != null && requiredType.isEnum() ) {
             return new ErrorResponse(
                     APIErrorsEnum.INVALID_FIELD_ENUM.getCode(),
-                    APIErrorsEnum.INVALID_FIELD_ENUM.getMessage(
-                            constraintViolation.getPropertyName(),
-                            String.valueOf( constraintViolation.getValue() ) ),
+                    APIErrorsEnum.INVALID_FIELD_ENUM.getMessage(),
                     ErrorDetailIdentifier.builder()
                             .type( constraintViolation.getPropertyName() )
                             .value( String.valueOf( constraintViolation.getValue() ) )
@@ -57,10 +54,7 @@ public class ErrorResponse {
 
         return new ErrorResponse(
                 APIErrorsEnum.INVALID_FIELD_TYPE.getCode(),
-                APIErrorsEnum.INVALID_FIELD_TYPE.getMessage(
-                        constraintViolation.getPropertyName(),
-                        String.valueOf( constraintViolation.getValue() ),
-                        requiredTypeName ),
+                APIErrorsEnum.INVALID_FIELD_TYPE.getMessage(),
                 ErrorDetailIdentifier.builder()
                         .type( constraintViolation.getPropertyName() )
                         .value( String.valueOf( constraintViolation.getValue() ) )
@@ -71,10 +65,7 @@ public class ErrorResponse {
     public static ErrorResponse adapt( FieldError fieldError ) {
         return new ErrorResponse(
                 APIErrorsEnum.INVALID_FIELD_VALUE.getCode(),
-                APIErrorsEnum.INVALID_FIELD_VALUE.getMessage(
-                        fieldError.getField(),
-                        String.valueOf( fieldError.getRejectedValue() )
-                ),
+                APIErrorsEnum.INVALID_FIELD_VALUE.getMessage(),
                 ErrorDetailIdentifier.builder()
                         .type( fieldError.getField() )
                         .value( String.valueOf( fieldError.getRejectedValue() ) )

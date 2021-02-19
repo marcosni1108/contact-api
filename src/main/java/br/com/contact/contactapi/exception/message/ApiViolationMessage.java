@@ -44,19 +44,4 @@ public interface ApiViolationMessage {
      */
     int httpCode();
 
-    /**
-     * Return if is required args for message interpolation
-     *
-     * @return if is required args for message interpolation
-     */
-//    boolean requireArgsForMessage();
-
-    /**
-     *
-     * Return type of args
-     *
-     * @return type of args
-     */
-//    Collection<Class<?>> argsTypes();
-
 }

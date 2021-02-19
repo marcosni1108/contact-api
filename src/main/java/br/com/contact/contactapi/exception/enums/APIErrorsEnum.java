@@ -2,8 +2,8 @@ package br.com.contact.contactapi.exception.enums;
 
 import br.com.contact.contactapi.exception.message.ApiViolationMessage;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
 
 import java.util.ResourceBundle;
 
@@ -28,13 +28,11 @@ public enum APIErrorsEnum implements ApiViolationMessage {
     private final String code;
     private final String message;
     private final int httpCode;
-//    private final Collection< Class< ? > > argsTypes;
 
-    APIErrorsEnum( final String code, final String message, int httpCode ) {//, Class< ? >... argsTypes ) {
+    APIErrorsEnum( final String code, final String message, int httpCode ) {
         this.code = code;
         this.message = message;
         this.httpCode = httpCode;
-//        this.argsTypes = ImmutableList.copyOf( argsTypes );
     }
 
     public static APIErrorsEnum getByMessage( String messagekey ) {
@@ -49,8 +47,8 @@ public enum APIErrorsEnum implements ApiViolationMessage {
         return null;
     }
 
-    public String getMessage( String... args ) {
-        return String.format( resourceBundle.getString( message ), args );
+    public String getMessage() {
+        return resourceBundle.getString( message );
     }
 
     @Override
@@ -77,14 +75,4 @@ public enum APIErrorsEnum implements ApiViolationMessage {
     public int httpCode() {
         return httpCode;
     }
-
-//    @Override
-//    public boolean requireArgsForMessage() {
-//        return !argsTypes.isEmpty();
-//    }
-//
-//    @Override
-//    public Collection< Class< ? > > argsTypes() {
-//        return argsTypes;
-//    }
 }
