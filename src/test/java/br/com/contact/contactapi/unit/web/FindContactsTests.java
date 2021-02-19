@@ -1,7 +1,7 @@
 package br.com.contact.contactapi.unit.web;
 
+import br.com.contact.contactapi.util.CommonsTests;
 import br.com.contact.contactapi.web.dto.ContactDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +13,6 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -34,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         @Sql( value = "/unit/contact/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD ),
         @Sql( value = "/unit/contact/sql/clear-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD )
 } )
-class FindContactsTests {
+class FindContactsTests extends CommonsTests {
 
     private static final String FIND_CONTACTS_SUCCESS = "src/test/resources/unit/contact/findcontacts/find-contacts-success.json";
     private static final String FIND_CONTACT_BY_DOCUMENT_NUMBER_SUCCESS = "src/test/resources/unit/contact/findcontacts/find-contact-by-document-number-success.json";
@@ -44,7 +41,7 @@ class FindContactsTests {
     public MockMvc mockMvc;
 
     @Test
-    public void givenEmptyFilterMustReturnThreeContacts() throws Exception {
+    void givenEmptyFilterMustReturnThreeContacts() throws Exception {
         List< ContactDTO > contacts = jsonToList( FIND_CONTACTS_SUCCESS, ContactDTO.class );
         mockMvc.perform( get( "/contacts" )
                 .contentType( MediaType.APPLICATION_JSON ) )
@@ -64,7 +61,7 @@ class FindContactsTests {
     }
 
     @Test
-    public void givenValidFilterByDocumentNumberMustReturnOneContact() throws Exception {
+    void givenValidFilterByDocumentNumberMustReturnOneContact() throws Exception {
         List< ContactDTO > contacts = jsonToList( FIND_CONTACT_BY_DOCUMENT_NUMBER_SUCCESS, ContactDTO.class );
         mockMvc.perform( get( "/contacts" )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -77,7 +74,7 @@ class FindContactsTests {
     }
 
     @Test
-    public void givenValidFilterByNameMustReturnOneContact() throws Exception {
+    void givenValidFilterByNameMustReturnOneContact() throws Exception {
         List< ContactDTO > contacts = jsonToList( FIND_CONTACT_BY_NAME_SUCCESS, ContactDTO.class );
         mockMvc.perform( get( "/contacts" )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -90,7 +87,7 @@ class FindContactsTests {
     }
 
     @Test
-    public void givenValidFilterByHalfNameMustReturnThreeContacts() throws Exception {
+    void givenValidFilterByHalfNameMustReturnThreeContacts() throws Exception {
         List< ContactDTO > contacts = jsonToList( FIND_CONTACTS_SUCCESS, ContactDTO.class );
         mockMvc.perform( get( "/contacts" )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -111,22 +108,12 @@ class FindContactsTests {
     }
 
     @Test
-    public void givenNonexistentDocumentNumberMustReturnEmptyList() throws Exception {
+    void givenNonexistentDocumentNumberMustReturnEmptyList() throws Exception {
         mockMvc.perform( get( "/contacts" )
                 .contentType( MediaType.APPLICATION_JSON )
                 .param( "documentNumber", "97010674019" ) )
                 .andExpect( status().isOk() )
                 .andExpect( jsonPath( "$", empty() ) );
-    }
-
-    private static < M > List< M > jsonToList( String pathJson, Class< M > clazz ) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue( new File( pathJson ), mapper.getTypeFactory()
-                    .constructCollectionType( List.class, clazz ) );
-        } catch( IOException e ) {
-            return Collections.emptyList();
-        }
     }
 
 }

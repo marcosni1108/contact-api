@@ -1,8 +1,7 @@
 package br.com.contact.contactapi.unit.web;
 
+import br.com.contact.contactapi.util.CommonsTests;
 import br.com.contact.contactapi.web.dto.ContactDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +13,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -34,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         @Sql( value = "/unit/contact/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD ),
         @Sql( value = "/unit/contact/sql/clear-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD )
 } )
-class UpdateContactTests {
+class UpdateContactTests extends CommonsTests {
 
     private static final String UPDATE_CONTACT_SUCCESS = "src/test/resources/unit/contact/updatecontact/update-contact-success.json";
 
@@ -42,7 +38,7 @@ class UpdateContactTests {
     public MockMvc mockMvc;
 
     @Test
-    public void givenUpdateContactNameFilteredByDocumentNumberMustReturnUpdatedContact() throws Exception {
+    void givenUpdateContactNameFilteredByDocumentNumberMustReturnUpdatedContact() throws Exception {
         ContactDTO updateContact = jsonToObject( UPDATE_CONTACT_SUCCESS, ContactDTO.class );
 
         mockMvc.perform( put( "/contacts/{documentNumber}", "48209204050" )
@@ -68,7 +64,7 @@ class UpdateContactTests {
     }
 
     @Test
-    public void givenInvalidUpdateContactNameFilteredByDocumentNumberMustError() throws Exception {
+    void givenInvalidUpdateContactNameFilteredByDocumentNumberMustError() throws Exception {
         mockMvc.perform( put( "/contacts/{documentNumber}", "48209204050" )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( objectToJson( ContactDTO.builder()
@@ -83,7 +79,7 @@ class UpdateContactTests {
     }
 
     @Test
-    public void givenInvalidUpdateContactPhoneNumberFilteredByDocumentNumberMustError() throws Exception {
+    void givenInvalidUpdateContactPhoneNumberFilteredByDocumentNumberMustError() throws Exception {
         mockMvc.perform( put( "/contacts/{documentNumber}", "48209204050" )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( objectToJson( ContactDTO.builder()
@@ -98,7 +94,7 @@ class UpdateContactTests {
     }
 
     @Test
-    public void givenUpdateContactPhoneNumberFilteredByInvalidDocumentNumberMustReturnNoContentException() throws Exception {
+    void givenUpdateContactPhoneNumberFilteredByInvalidDocumentNumberMustReturnNoContentException() throws Exception {
         mockMvc.perform( put( "/contacts/{documentNumber}", "97010674019" )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( objectToJson( ContactDTO.builder()
@@ -109,22 +105,5 @@ class UpdateContactTests {
                 .andExpect( status().isNoContent() );
     }
 
-    private < M > M jsonToObject( String pathJson, Class< M > clazz ) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue( new File( pathJson ), clazz );
-        } catch( IOException var4 ) {
-            return null;
-        }
-    }
-
-    private String objectToJson( Object object ) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString( object );
-        } catch( JsonProcessingException var3 ) {
-            return "";
-        }
-    }
 
 }
