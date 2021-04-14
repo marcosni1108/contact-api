@@ -3,7 +3,11 @@ package br.com.contact.contactapi.unit.web;
 import br.com.contact.contactapi.util.CommonsTests;
 import br.com.contact.contactapi.web.dto.ContactDTO;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,16 +41,18 @@ class UpdateContactTests extends CommonsTests {
     @Autowired
     public MockMvc mockMvc;
 
-    @Test
-    void givenUpdateContactNameFilteredByDocumentNumberMustReturnUpdatedContact() throws Exception {
+    @ParameterizedTest
+    @DisplayName( "Dado um número de documento válido, deve atualizar o nome" )
+    @CsvSource( { "Teste 2 atualizado, 52963254125, 48209204050" } )
+    void givenUpdateContactNameFilteredByDocumentNumberMustReturnUpdatedContact( String name, String phoneNumber, String documentNumber ) throws Exception {
         ContactDTO updateContact = jsonToObject( UPDATE_CONTACT_SUCCESS, ContactDTO.class );
 
         mockMvc.perform( put( "/contacts/{documentNumber}", "48209204050" )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( objectToJson( ContactDTO.builder()
-                        .name( "Teste 2 atualizado" )
-                        .phoneNumber( "52963254125" )
-                        .documentNumber( "48209204050" )
+                        .name( name )
+                        .phoneNumber( phoneNumber )
+                        .documentNumber( documentNumber )
                         .build() ) ) )
                 .andExpect( status().isCreated() )
                 .andExpect( jsonPath( "$.name", is( updateContact.getName() ) ) )
@@ -63,9 +69,11 @@ class UpdateContactTests extends CommonsTests {
                 .andExpect( jsonPath( "$[0].phoneNumber", is( updateContact.getPhoneNumber() ) ) );
     }
 
-    @Test
-    void givenInvalidUpdateContactNameFilteredByDocumentNumberMustError() throws Exception {
-        mockMvc.perform( put( "/contacts/{documentNumber}", "48209204050" )
+    @ParameterizedTest
+    @DisplayName( "Dado um número de documento válido e um nome null, deve retornar erro de campo obrigatório para nome" )
+    @ValueSource( strings = "48209204050" )
+    void givenInvalidUpdateContactNameFilteredByDocumentNumberMustError( String documentNumber ) throws Exception {
+        mockMvc.perform( put( "/contacts/{documentNumber}", documentNumber )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( objectToJson( ContactDTO.builder()
                         .name( null )
@@ -79,6 +87,7 @@ class UpdateContactTests extends CommonsTests {
     }
 
     @Test
+    @DisplayName( "Dado um número de documento válido e um telefone null, deve retornar erro de campo obrigatório para telefone" )
     void givenInvalidUpdateContactPhoneNumberFilteredByDocumentNumberMustError() throws Exception {
         mockMvc.perform( put( "/contacts/{documentNumber}", "48209204050" )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -94,6 +103,7 @@ class UpdateContactTests extends CommonsTests {
     }
 
     @Test
+    @DisplayName( "Dado um número de documento inválido e um telefone, deve retornar isNoContent" )
     void givenUpdateContactPhoneNumberFilteredByInvalidDocumentNumberMustReturnNoContentException() throws Exception {
         mockMvc.perform( put( "/contacts/{documentNumber}", "97010674019" )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -104,6 +114,5 @@ class UpdateContactTests extends CommonsTests {
                         .build() ) ) )
                 .andExpect( status().isNoContent() );
     }
-
 
 }
