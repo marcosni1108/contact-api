@@ -1,6 +1,6 @@
 package br.com.contact.contactapi.web;
 
-import br.com.contact.contactapi.mapper.ContactMapper;
+import br.com.contact.contactapi.domain.Contact;
 import br.com.contact.contactapi.service.ContactService;
 import br.com.contact.contactapi.web.dto.ContactDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping( "contacts" )
@@ -28,15 +29,15 @@ public class ContactController {
 
     @PostMapping
     public ResponseEntity< ContactDTO > saveContact( @RequestBody @Valid ContactDTO contact ) {
-
-        ContactDTO contactDTO = ContactMapper.toContactDTO( service.saveContact( ContactMapper.toContact( contact ) ) );
-        return new ResponseEntity<>( contactDTO, HttpStatus.CREATED );
+        return new ResponseEntity<>( new ContactDTO( service.saveContact( new Contact( contact ) ) ), HttpStatus.CREATED );
     }
 
     @GetMapping
     public ResponseEntity< List< ContactDTO > > findContacts( @Valid ContactDTO request ) {
-        List< ContactDTO > contacts = ContactMapper.toContactDTO( service.findContacts( ContactMapper.toContact( request ) ) );
-        return new ResponseEntity<>( contacts, HttpStatus.OK );
+        return new ResponseEntity<>( service.findContacts( new Contact( request ) )
+                .stream()
+                .map( ContactDTO :: new )
+                .collect( Collectors.toList() ), HttpStatus.OK );
     }
 
     @DeleteMapping( value = "/{documentNumber}" )
@@ -48,8 +49,7 @@ public class ContactController {
     @PutMapping( value = "/{documentNumber}" )
     public ResponseEntity< ContactDTO > updateContactByDocumentNumber( @PathVariable( value = "documentNumber" ) String documentNumber,
                                                                        @RequestBody @Valid ContactDTO contact ) {
-        ContactDTO contactDTO = ContactMapper.toContactDTO( service.updateContactByDocumentNumber( documentNumber, ContactMapper.toContact( contact ) ) );
-        return new ResponseEntity<>( contactDTO, HttpStatus.CREATED );
+        return new ResponseEntity<>( new ContactDTO( service.updateContactByDocumentNumber( documentNumber, new Contact( contact ) ) ), HttpStatus.CREATED );
     }
 
 }
