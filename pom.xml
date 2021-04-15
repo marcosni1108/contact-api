@@ -220,6 +220,17 @@
                     </execution>
                 </executions>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>${maven-surefire-plugin.version}</version>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash; Include tags&ndash;&gt;-->
+<!--                    <groups>performance | api</groups>-->
+<!--                    &lt;!&ndash; Exclude tags &ndash;&gt;-->
+<!--                    <excludedGroups>duplicated</excludedGroups>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
